@@ -4,6 +4,7 @@ from personlab.datamaker.maker import make_input
 import pickle, queue, threading
 from pathlib import Path
 
+
 def worker():
     while True:
         item = q.get()
@@ -22,6 +23,7 @@ def worker():
         with open('tr/' + filename, 'wb') as f:
             pickle.dump(dset, f)
         q.task_done()
+
 
 num_worker_threads = 8
 q = queue.Queue()
@@ -47,5 +49,4 @@ q.join()
 for i in range(num_worker_threads):
     q.put(None)
 for t in threads:
-    t.join() 
-
+    t.join()

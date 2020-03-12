@@ -5,7 +5,6 @@ from personlab.nets.mobilenet import mobilenet_v2
 from personlab.models.model_base import model_base
 
 
-
 def mobilenet_v2_model(image_tensor, checkpoint_path=None, is_training=False):
     with slim.arg_scope(mobilenet_v2.training_scope(is_training=is_training)):
         frame_tensor = tf.cast(image_tensor, tf.float32)

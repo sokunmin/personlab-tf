@@ -3,8 +3,6 @@ from matplotlib import pyplot as plt
 from skimage.draw import line_aa
 from . import config
 
-
-
 KP_COLORS = np.array([np.random.rand(3) for _ in range(config.NUM_KP)])
 
 
@@ -47,9 +45,9 @@ def offset_summary(img, hm, hm_true, off_x, off_y, alpha=0.4, stride=10):
             for y in range(0, H, stride):
                 for x in range(0, W, stride):
                     if hm_true[y, x, k]:
-                        yy, xx, val = line_aa(y, x, int(y+off_y[y, x, k]), int(x+off_x[y, x, k]))
-                        yy = np.clip(yy, 0, H-1)
-                        xx = np.clip(xx, 0, W-1)
+                        yy, xx, val = line_aa(y, x, int(y + off_y[y, x, k]), int(x + off_x[y, x, k]))
+                        yy = np.clip(yy, 0, H - 1)
+                        xx = np.clip(xx, 0, W - 1)
                         val = np.expand_dims(val, axis=-1)
                         res[yy, xx] = val * color + (1 - val) * res[yy, xx]
     else:
@@ -58,9 +56,9 @@ def offset_summary(img, hm, hm_true, off_x, off_y, alpha=0.4, stride=10):
         for y in range(0, H, stride):
             for x in range(0, W, stride):
                 if hm_true[y, x]:
-                    yy, xx, val = line_aa(y, x, int(y+off_y[y, x]), int(x+off_x[y, x]))
-                    yy = np.clip(yy, 0, H-1)
-                    xx = np.clip(xx, 0, W-1)
+                    yy, xx, val = line_aa(y, x, int(y + off_y[y, x]), int(x + off_x[y, x]))
+                    yy = np.clip(yy, 0, H - 1)
+                    xx = np.clip(xx, 0, W - 1)
                     val = np.expand_dims(val, axis=-1)
                     res[yy, xx] = val * color + (1 - val) * res[yy, xx]
 
@@ -77,14 +75,14 @@ def summary_skeleton(img, kp_map):
         kp_point = np.zeros([config.NUM_KP, 3], dtype=np.int16)
         for y, x in zip(*np.nonzero(kp_map[..., 0] == p_i + 1)):
             kp_i = kp_map[y, x, 1]
-            kp_point[kp_i-1] = (x, y, 1)
+            kp_point[kp_i - 1] = (x, y, 1)
 
         for kp_i, kp in enumerate(kp_point):
             x, y, c = kp
             if c == 0:
                 continue
-            start = (y-5, x-5)
-            end = (y+5, x+5)
+            start = (y - 5, x - 5)
+            end = (y + 5, x + 5)
             res[start[0]:end[0], start[1]:end[1]] = KP_COLORS[kp_i]
 
         for e1, e2 in config.EDGES:
@@ -93,8 +91,8 @@ def summary_skeleton(img, kp_map):
             sx, sy, _ = kp_point[e1]
             ex, ey, _ = kp_point[e2]
             yy, xx, val = line_aa(sy, sx, ey, ex)
-            yy = np.clip(yy, 0, H-1)
-            xx = np.clip(xx, 0, W-1)
+            yy = np.clip(yy, 0, H - 1)
+            xx = np.clip(xx, 0, W - 1)
             val = np.expand_dims(val, axis=-1)
             res[yy, xx] = val * color + (1 - val) * res[yy, xx]
 

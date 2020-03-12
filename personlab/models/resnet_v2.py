@@ -4,17 +4,16 @@ import numpy as np
 from personlab import config
 from personlab.models.model_base import model_base
 from personlab.nets import resnet_v2, resnet_utils
-from personlab.preprocessing  import inception_preprocessing
-
-
+from personlab.preprocessing import inception_preprocessing
 
 INNER_H = INNER_W = 299
 MD_H = MD_W = 38
 
+
 def resnet_v2_model(image_tensor, resnet_fn, checkpoint_path=None, is_training=False):
     def inception_preproc_fn(image_raw):
         image = inception_preprocessing.preprocess_image(image_raw, INNER_H, INNER_W, \
-                                                         is_training=is_training,  \
+                                                         is_training=is_training, \
                                                          add_image_summaries=False)
         return image
 

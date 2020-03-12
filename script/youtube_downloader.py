@@ -1,6 +1,5 @@
 import pytube
 
-
 video_list = {
     'twice': [
         'https://www.youtube.com/watch?v=P9L5QCed3ao',
@@ -32,4 +31,4 @@ for k, fl in video_list.items():
     for f_i, url in enumerate(fl):
         file_prefix = "%s_%d" % (k, f_i)
         pytube.YouTube(url).streams.filter(subtype='mp4').filter(res='720p') \
-              .first().download(filename_prefix=file_prefix)
+            .first().download(filename_prefix=file_prefix)

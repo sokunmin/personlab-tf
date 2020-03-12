@@ -103,4 +103,3 @@ def construct_keypoint_map(hm, so_x, so_y, mo_x, mo_y):
         _, py, px, pk = kp_list[p_i]
         kp_map[py, px] = (include_in[p_i], pk + 1)
     return kp_map
-

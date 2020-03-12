@@ -1,12 +1,10 @@
 import queue, threading, random
-import numpy as np
 import skimage.io as io
 from pycocotools.coco import COCO
 from personlab import config
 from personlab.data.datautil import construct_personlab_input
 from scipy.misc import imresize
-
-
+import numpy as np
 
 TAR_H = config.TAR_H
 TAR_W = config.TAR_W
@@ -22,7 +20,6 @@ class CocoDataGenerator:
         self.num_workers = config.WORKER_SIZE
         self.in_q = queue.Queue(maxsize=config.IN_QUEUE_SIZE)
         self.out_q = queue.Queue(maxsize=config.OUT_QUEUE_SIZE)
-
 
     def read_coco(self, img_info):
         img = io.imread(self.base_dir + img_info['file_name'])
@@ -44,12 +41,14 @@ class CocoDataGenerator:
 
         num_person = len(anns)
         image_res = imresize(img[sy:ey, sx:ex, :], size=(TAR_H, TAR_W), interp='bilinear')
+        # image_res = mmcv.imresize(img[sy:ey, sx:ex, :], size=(TAR_H, TAR_W), interpolation='bilinear')
         seg_res = np.zeros([num_person, TAR_H, TAR_W], dtype=np.uint8)
         kp_list = np.zeros([config.NUM_KP, 3, num_person], dtype=np.int16)
 
         for p_i, ann in enumerate(anns):
             seg_org = self.coco_kps.annToMask(ann)
             seg_res[p_i] = imresize(seg_org[sy:ey, sx:ex], size=(TAR_H, TAR_W), interp='nearest')
+            # seg_res[p_i] = mmcv.imresize(seg_org[sy:ey, sx:ex], size=(TAR_H, TAR_W), interpolation='nearest')
             kp_coco = np.array([ann['keypoints']]).reshape([-1, 3])
             cx = kp_coco[:, 0]
             cy = kp_coco[:, 1]
@@ -64,7 +63,6 @@ class CocoDataGenerator:
         seg_all = np.expand_dims(seg_res.any(axis=0), axis=-1)
         return image_res, seg_res, seg_all, kp_list
 
-
     def provider(self):
         for img_info in self.img_infos:
             self.in_q.put(img_info)
@@ -72,7 +70,6 @@ class CocoDataGenerator:
             self.in_q.put(None)
         self.in_q.join()
         self.out_q.put(None)
-
 
     def loader(self):
         worker_threads = []
@@ -94,7 +91,6 @@ class CocoDataGenerator:
         for t in worker_threads:
             t.join()
         provider_thread.join()
-
 
     def worker(self):
         while True:

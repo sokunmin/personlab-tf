@@ -3,15 +3,13 @@ from numpy import newaxis as nX
 from personlab import config
 from scipy.sparse import coo_matrix
 
-
-
 H = config.TAR_H
 W = config.TAR_W
 R = config.RADIUS
 shape = (H, W)
 
 Y, X = np.indices(shape)
-Y_r, X_r = np.indices([2*R+1, 2*R+1]) - R
+Y_r, X_r = np.indices([2 * R + 1, 2 * R + 1]) - R
 Y_r = Y_r[nX, ...]
 X_r = X_r[nX, ...]
 B_r = Y_r * Y_r + X_r * X_r < R * R
@@ -69,16 +67,16 @@ def construct_personlab_input(kp_list, seg):
         lo_x[..., kp_i] = x_off
         lo_y[..., kp_i] = y_off
         for p_i in range(num_people):
-            if 0 <= cx[p_i] and cx[p_i] < config.TAR_W and \
-                0 <= cy[p_i] and cy[p_i] < config.TAR_H and cb[p_i] > 0:
-                kp_map[cy[p_i], cx[p_i]] = (p_i+1, kp_i+1)
+            if 0 <= cx[p_i] < config.TAR_W and \
+               0 <= cy[p_i] < config.TAR_H and cb[p_i] > 0:
+                kp_map[cy[p_i], cx[p_i]] = (p_i + 1, kp_i + 1)
 
     for e_i, e in enumerate(config.EDGES):
         k_1, k_2 = e
         x1, y1, b1 = kp_list[k_1]
         x2, y2, b2 = kp_list[k_2]
         b = np.logical_and(b1 > 0, b2 > 0)
-        _, x_off, y_off = make_disk(x1, y1, b, x2-x1, y2-y1)
+        _, x_off, y_off = make_disk(x1, y1, b, x2 - x1, y2 - y1)
         mo_x[..., e_i] = x_off
         mo_y[..., e_i] = y_off
 
